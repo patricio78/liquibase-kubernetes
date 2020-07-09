@@ -4,10 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>liquibase-kubernetes</name>
     <groupId>com.github.patricio78</groupId>
     <artifactId>liquibase-kubernetes</artifactId>
     <version>1.0.0</version>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Alternate Liquibase Locking solution which makes able an application to recover from a terminated Schema update using Kubernetes API.</description>
+    <url>https://github.com/patricio78/liquibase-kubernetes</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -139,7 +142,7 @@
                         <id>javadoc</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>javadoc</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -159,11 +162,18 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git://github.com/patricio78/Kubernetes-Liquibase-Lock-Release.git</connection>
-        <developerConnection>scm:git: git@github.com:patricio78/Kubernetes-Liquibase-Lock-Release.git </developerConnection>
-        <url>https://github.com/patricio78/Kubernetes-Liquibase-Lock-Release</url>
+        <connection>scm:git:git://github.com/patricio78/liquibase-kubernetes.git</connection>
+        <developerConnection>scm:git:git@github.com:patricio78/liquibase-kubernetes.git</developerConnection>
+        <url>https://github.com/patricio78/liquibase-kubernetes</url>
         <tag>HEAD</tag>
     </scm>
+
+    <developers>
+        <developer>
+            <name>Patricio Barletta</name>
+            <email>patricio78@gmail.com</email>
+        </developer>
+    </developers>
 
     <profiles>
         <!-- GPG Signature on release -->
@@ -196,5 +206,11 @@
         </profile>
     </profiles>
 
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
 </project>
