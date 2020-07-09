@@ -1,4 +1,4 @@
-package hu.gyuuu.liquibasekubernetes;
+package com.github.patricio78.liquibase.kubernetes;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
