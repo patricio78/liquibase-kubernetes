@@ -1,6 +1,5 @@
-package liquibase.lockservice.ext.ext;
+package com.github.patricio78.liquibase.kubernetes;
 
-import com.github.patricio78.liquibase.kubernetes.KubernetesConnector;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LockException;
