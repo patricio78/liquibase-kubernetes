@@ -87,6 +87,6 @@ metadata:
   name: reader-role
 rules:
   - apiGroups: [""]
-    resources: ["pods"]
+    resources: ["pods", "pods/status"]
     verbs: ["get", "watch", "list"]
 ```
