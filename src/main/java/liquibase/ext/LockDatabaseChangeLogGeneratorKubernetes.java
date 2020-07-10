@@ -1,5 +1,6 @@
-package com.github.patricio78.liquibase.kubernetes;
+package liquibase.ext;
 
+import com.github.patricio78.liquibase.kubernetes.KubernetesConnector;
 import liquibase.database.Database;
 import liquibase.datatype.DataTypeFactory;
 import liquibase.sql.Sql;
