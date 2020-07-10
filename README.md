@@ -40,8 +40,21 @@ The library checks for connection with the Kubernetes API and if it's not able t
 # How to use this library
 Using the library is quite easy: it has to be added as a dependency and 2 environment variables has to be set.
 
-## Maven/Gradle etc. dependency
-Currently no binaries are publicly available, so please, as of now, build and host it for your self. My goal is to make it available in Maven Central or Sonatype OSS when it is considered stable.
+## Maven/Gradle dependency
+
+### Maven
+
+```
+<groupId>com.github.patricio78</groupId>
+<artifactId>liquibase-kubernetes</artifactId>
+<version>1.0.1-SNAPSSHOT</version>
+```
+
+### Gradle
+
+```
+implementation 'com.github.patricio78:liquibase-kubernetes:1.0.1-SNAPSHOT'
+```
 
 ## Kubernetes Deployment config
 Two environment variables are required:
@@ -74,6 +87,6 @@ metadata:
   name: reader-role
 rules:
   - apiGroups: [""]
-    resources: ["*"]
+    resources: ["pods"]
     verbs: ["get", "watch", "list"]
 ```
