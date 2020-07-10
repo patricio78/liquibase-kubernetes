@@ -7,13 +7,14 @@ import liquibase.executor.ExecutorService;
 import liquibase.lockservice.StandardLockService;
 import liquibase.statement.core.SelectFromDatabaseChangeLogLockStatement;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.StringTokenizer;
 
 public class KubernetesLockService extends StandardLockService {
 
-    private static final Log LOG = org.apache.commons.logging.LogFactory.getLog(KubernetesLockService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesLockService.class);
 
     @Override
     public int getPriority() {
@@ -30,7 +31,7 @@ public class KubernetesLockService extends StandardLockService {
         try {
             String lockedBy = ExecutorService.getInstance().getExecutor(database).queryForObject(new SelectFromDatabaseChangeLogLockStatement("LOCKEDBY"), String.class);
             if (StringUtils.isNotBlank(lockedBy)) {
-                LOG.trace("Database locked by: " + lockedBy);
+                LOG.trace("Database locked by: {}", lockedBy);
                 StringTokenizer tok = new StringTokenizer(lockedBy, ":");
                 if (tok.countTokens() == 2) {
                     String podNamespace = tok.nextToken();
@@ -39,13 +40,13 @@ public class KubernetesLockService extends StandardLockService {
                         LOG.debug("Lock created by the same pod, release lock");
                         releaseLock();
                     }
-                    Boolean lockHolderPodActive = KubernetesConnector.getInstance().isPodActive(podNamespace, podName);
-                    if (lockHolderPodActive != null && !lockHolderPodActive) {
+                    boolean lockHolderPodActive = KubernetesConnector.getInstance().isPodActive(podNamespace, podName);
+                    if (!lockHolderPodActive) {
                         LOG.debug("Lock created by an inactive pod, release lock");
                         releaseLock();
                     }
                 } else {
-                    LOG.debug("Can't parse LOCKEDBY field: " + lockedBy);
+                    LOG.debug("Can't parse LOCKEDBY field: {}", lockedBy);
                 }
             } else {
                 LOG.trace("Databased is not locked");
