@@ -6,7 +6,7 @@
 
     <groupId>com.github.patricio78</groupId>
     <artifactId>liquibase-kubernetes</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Alternate Liquibase Locking solution which makes able an application to recover from a terminated Schema update using Kubernetes API.</description>
@@ -29,11 +29,10 @@
             <artifactId>client-java</artifactId>
             <version>8.0.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.2</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.6</version>
         </dependency>
     </dependencies>
 

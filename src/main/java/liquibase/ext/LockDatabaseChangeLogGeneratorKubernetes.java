@@ -1,5 +1,6 @@
-package com.github.patricio78.liquibase.kubernetes;
+package liquibase.ext;
 
+import com.github.patricio78.liquibase.kubernetes.KubernetesConnector;
 import liquibase.database.Database;
 import liquibase.datatype.DataTypeFactory;
 import liquibase.sql.Sql;
@@ -8,13 +9,13 @@ import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.sqlgenerator.core.LockDatabaseChangeLogGenerator;
 import liquibase.statement.core.LockDatabaseChangeLogStatement;
 import liquibase.statement.core.UpdateStatement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 
 public class LockDatabaseChangeLogGeneratorKubernetes extends LockDatabaseChangeLogGenerator {
-    private static final Log LOG = LogFactory.getLog(LockDatabaseChangeLogGeneratorKubernetes.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LockDatabaseChangeLogGeneratorKubernetes.class);
 
     @Override
     public int getPriority() {

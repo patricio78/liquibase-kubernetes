@@ -7,15 +7,15 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.util.Config;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
 
 public class KubernetesConnector {
 
-    private static final Log LOG = LogFactory.getLog(KubernetesConnector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesConnector.class);
     public static final String POD_PHASE_PENDING = "Pending";
     public static final String POD_PHASE_RUNNING = "Running";
     public static final int HTTP_STATUS_NOT_FOUND = 404;
@@ -23,7 +23,7 @@ public class KubernetesConnector {
     private final String podName;
     private final String podNamespace;
 
-    public static final class InstanceHolder {
+    private static final class InstanceHolder {
         private static final KubernetesConnector INSTANCE = new KubernetesConnector();
     }
 
@@ -49,14 +49,20 @@ public class KubernetesConnector {
 
             Configuration.setDefaultApiClient(client);
 
-            LOG.trace("BasePath: "+client.getBasePath());
-            LOG.trace("Authentication: "+client.getAuthentications().entrySet().stream().map(entry->entry.getKey()+":"+entry.getValue()).collect(Collectors.joining(", ")));
+            LOG.trace("BasePath: {}", client.getBasePath());
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Authentication: {}", client.getAuthentications().entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue()).collect(Collectors.joining(", ")));
+            }
 
             CoreV1Api api = new CoreV1Api();
-            LOG.trace("Reading pod status, Pod name: " + podName + " Pod namespace: " + podNamespace);
+            LOG.trace("Reading pod status, Pod name: {} Pod namespace: {}", podName, podNamespace);
             V1Pod pod = api.readNamespacedPodStatus(podName, podNamespace, "true");
+            if (pod == null || pod.getStatus() == null) {
+                return false;
+            }
             String podPhase = pod.getStatus().getPhase();
-            LOG.trace("Pod phase:" + podPhase);
+            LOG.trace("Pod phase: {}", podPhase);
             LOG.trace("Connected to Kubernetes using fromCluster configuration");
             return true;
         } catch (IOException | ApiException e) {
@@ -85,20 +91,23 @@ public class KubernetesConnector {
         return podNamespace.equals(this.podNamespace) && podName.equals(this.podName);
     }
 
-    public Boolean isPodActive(String podNamespace, String podName) {
+    public boolean isPodActive(String podNamespace, String podName) {
         try {
             CoreV1Api api = new CoreV1Api();
-            LOG.trace("Reading pod status, Pod name: " + podName + " Pod namespace: " + podNamespace);
-            V1Pod pod = null;
+            LOG.trace("Reading pod status, Pod name: {} Pod namespace: {}", podName, podNamespace);
+            V1Pod pod;
 
             pod = api.readNamespacedPodStatus(podName, podNamespace, "true");
+            if (pod == null || pod.getStatus() == null) {
+                return false;
+            }
             String podPhase = pod.getStatus().getPhase();
 
             if(POD_PHASE_PENDING.equals(podPhase) || POD_PHASE_RUNNING.equals(podPhase)){
-                LOG.trace("Pod is active, phase:"+podPhase);
+                LOG.trace("Pod is active, phase: {}",podPhase);
                 return true;
             } else {
-                LOG.trace("Pod is inactive, phase:"+podPhase);
+                LOG.trace("Pod is inactive, phase: {}", podPhase);
                 return false;
             }
         } catch (ApiException e) {
@@ -106,9 +115,9 @@ public class KubernetesConnector {
                 LOG.trace("Can't find pod");
                 return false;
             }
-            LOG.debug("Can't read Pod status:" + podNamespace + ":" + podName);
+            LOG.debug("Can't read Pod status: {}:{}", podNamespace, podName);
             LOG.trace("Pod status read error", e);
-            return null;
+            return false;
         }
     }
 }
