@@ -40,7 +40,7 @@ The library checks for connection with the Kubernetes API and if it's not able t
 # How to use this library
 Using the library is quite easy: it has to be added as a dependency and 2 environment variables has to be set.
 
-## Maven/Gradle etc. dependency
+## Maven/Gradle dependency
 
 ### Maven
 
