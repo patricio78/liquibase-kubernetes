@@ -1,9 +1,11 @@
 package liquibase.ext;
 
 import com.github.patricio78.liquibase.kubernetes.KubernetesConnector;
+import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LockException;
+import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.lockservice.StandardLockService;
 import liquibase.statement.core.SelectFromDatabaseChangeLogLockStatement;
@@ -30,7 +32,8 @@ public class KubernetesLockService extends StandardLockService {
     @Override
     public void waitForLock() throws LockException {
         try {
-            String lockedBy = ExecutorService.getInstance().getExecutor(database).queryForObject(new SelectFromDatabaseChangeLogLockStatement("LOCKEDBY"), String.class);
+            Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc",  database);
+            String lockedBy = executor.queryForObject(new SelectFromDatabaseChangeLogLockStatement("LOCKEDBY"), String.class);
             if (StringUtils.isNotBlank(lockedBy)) {
                 LOG.trace("Database locked by: {}", lockedBy);
                 StringTokenizer tok = new StringTokenizer(lockedBy, ":");
