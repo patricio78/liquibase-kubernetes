@@ -38,36 +38,36 @@ public class KubernetesConnector {
             connected = connect();
         } else {
             connected = false;
-            LOG.debug("POD_NAME or POD_NAMESPACE is not configured, Liquibase - Kubernetes integration disabled");
+            LOG.warn("POD_NAME or POD_NAMESPACE is not configured, Liquibase - Kubernetes integration disabled");
         }
     }
 
     private boolean connect() {
         try {
-            LOG.trace("Create client with from cluster configuration");
+            LOG.info("Create client with from cluster configuration");
             ApiClient client = Config.fromCluster();
 
             Configuration.setDefaultApiClient(client);
 
-            LOG.trace("BasePath: {}", client.getBasePath());
+            LOG.info("BasePath: {}", client.getBasePath());
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Authentication: {}", client.getAuthentications().entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue()).collect(Collectors.joining(", ")));
             }
 
             CoreV1Api api = new CoreV1Api();
-            LOG.trace("Reading pod status, Pod name: {} Pod namespace: {}", podName, podNamespace);
+            LOG.info("Reading pod status, Pod name: {} Pod namespace: {}", podName, podNamespace);
             V1Pod pod = api.readNamespacedPodStatus(podName, podNamespace, "true");
             if (pod == null || pod.getStatus() == null) {
                 return false;
             }
             String podPhase = pod.getStatus().getPhase();
-            LOG.trace("Pod phase: {}", podPhase);
-            LOG.trace("Connected to Kubernetes using fromCluster configuration");
+            LOG.info("Pod phase: {}", podPhase);
+            LOG.info("Connected to Kubernetes using fromCluster configuration");
             return true;
         } catch (IOException | ApiException e) {
-            LOG.debug("Connection fail to Kubernetes cluster using fromCluster configuration");
-            LOG.trace("Pod status read error", e);
+            LOG.error("Connection fail to Kubernetes cluster using fromCluster configuration");
+            LOG.error("Pod status read error", e);
             return false;
         }
     }
@@ -94,7 +94,7 @@ public class KubernetesConnector {
     public boolean isPodActive(String podNamespace, String podName) {
         try {
             CoreV1Api api = new CoreV1Api();
-            LOG.trace("Reading pod status, Pod name: {} Pod namespace: {}", podName, podNamespace);
+            LOG.info("Reading pod status, Pod name: {} Pod namespace: {}", podName, podNamespace);
             V1Pod pod;
 
             pod = api.readNamespacedPodStatus(podName, podNamespace, "true");
@@ -104,19 +104,19 @@ public class KubernetesConnector {
             String podPhase = pod.getStatus().getPhase();
 
             if(POD_PHASE_PENDING.equals(podPhase) || POD_PHASE_RUNNING.equals(podPhase)){
-                LOG.trace("Pod is active, phase: {}",podPhase);
+                LOG.info("Pod is active, phase: {}",podPhase);
                 return true;
             } else {
-                LOG.trace("Pod is inactive, phase: {}", podPhase);
+                LOG.info("Pod is inactive, phase: {}", podPhase);
                 return false;
             }
         } catch (ApiException e) {
             if(e.getCode() == HTTP_STATUS_NOT_FOUND){
-                LOG.trace("Can't find pod");
+                LOG.error("Can't find pod");
                 return false;
             }
-            LOG.debug("Can't read Pod status: {}:{}", podNamespace, podName);
-            LOG.trace("Pod status read error", e);
+            LOG.error("Can't read Pod status: {}:{}", podNamespace, podName);
+            LOG.error("Pod status read error", e);
             return false;
         }
     }
