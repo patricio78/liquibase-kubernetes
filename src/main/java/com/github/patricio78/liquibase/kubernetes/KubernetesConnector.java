@@ -5,13 +5,19 @@ import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Pod;
-import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.ClientBuilder;
+import io.kubernetes.client.util.credentials.TokenFileAuthentication;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.stream.Collectors;
+
+import static io.kubernetes.client.util.Config.SERVICEACCOUNT_CA_PATH;
+import static io.kubernetes.client.util.Config.SERVICEACCOUNT_TOKEN_PATH;
 
 public class KubernetesConnector {
 
@@ -45,7 +51,16 @@ public class KubernetesConnector {
     private boolean connect() {
         try {
             LOG.info("Create client with from cluster configuration");
-            ApiClient client = Config.fromCluster();
+
+            final String serviceAccountCaPath = System.getenv().getOrDefault("SERVICEACCOUNT_CA_PATH", SERVICEACCOUNT_CA_PATH);
+            final String serviceAccountTokenPath = System.getenv().getOrDefault("SERVICEACCOUNT_TOKEN_PATH", SERVICEACCOUNT_TOKEN_PATH);
+
+            LOG.info("Service account CA path: {}, Service account token path: {}", serviceAccountCaPath, serviceAccountTokenPath);
+
+            final ApiClient client = ClientBuilder.cluster()
+                    .setCertificateAuthority(Files.readAllBytes(Paths.get(serviceAccountCaPath)))
+                    .setAuthentication(new TokenFileAuthentication(serviceAccountTokenPath))
+                    .build();
 
             Configuration.setDefaultApiClient(client);
 
