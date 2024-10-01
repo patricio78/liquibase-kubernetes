@@ -72,7 +72,7 @@ public class KubernetesConnector {
 
             CoreV1Api api = new CoreV1Api();
             LOG.info("Reading pod status, Pod name: {} Pod namespace: {}", podName, podNamespace);
-            V1Pod pod = api.readNamespacedPodStatus(podName, podNamespace, "true");
+            V1Pod pod = api.readNamespacedPodStatus(podName, podNamespace).pretty("true").execute();
             if (pod == null || pod.getStatus() == null) {
                 return false;
             }
@@ -112,7 +112,7 @@ public class KubernetesConnector {
             LOG.info("Reading pod status, Pod name: {} Pod namespace: {}", podName, podNamespace);
             V1Pod pod;
 
-            pod = api.readNamespacedPodStatus(podName, podNamespace, "true");
+            pod = api.readNamespacedPodStatus(podName, podNamespace).pretty("true").execute();
             if (pod == null || pod.getStatus() == null) {
                 return false;
             }
