@@ -47,7 +47,7 @@ Using the library is quite easy: it has to be added as a dependency and 2 enviro
 ```
 <groupId>com.github.patricio78</groupId>
 <artifactId>liquibase-kubernetes</artifactId>
-<version>2.0.0</version>
+<version>2.3.0</version>
 ```
 
 ### Gradle
