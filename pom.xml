@@ -6,7 +6,7 @@
 
     <groupId>com.github.patricio78</groupId>
     <artifactId>liquibase-kubernetes</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.1</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Alternate Liquibase Locking solution which makes able an application to recover from a terminated Schema update using Kubernetes API.</description>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>io.kubernetes</groupId>
             <artifactId>client-java</artifactId>
-            <version>21.0.1</version>
+            <version>21.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
