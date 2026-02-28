@@ -6,7 +6,7 @@
 
     <groupId>com.github.patricio78</groupId>
     <artifactId>liquibase-kubernetes</artifactId>
-    <version>2.3.1</version>
+    <version>2.3.2</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Alternate Liquibase Locking solution which makes able an application to recover from a terminated Schema update using Kubernetes API.</description>
@@ -27,12 +27,12 @@
         <dependency>
             <groupId>io.kubernetes</groupId>
             <artifactId>client-java</artifactId>
-            <version>21.0.2</version>
+            <version>25.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.16</version>
+            <version>2.0.17</version>
         </dependency>
     </dependencies>
 
@@ -98,23 +98,15 @@
                 </dependencies>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.7.0</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.9.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                  <publishingServerId>central</publishingServerId>
+                  <autoPublish>true</autoPublish>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-core</artifactId>
-                        <version>2.15.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+           </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -193,7 +185,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.7</version>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
