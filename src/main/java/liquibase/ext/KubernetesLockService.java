@@ -36,27 +36,36 @@ public class KubernetesLockService extends StandardLockService {
             String lockedBy = executor.queryForObject(new SelectFromDatabaseChangeLogLockStatement("LOCKEDBY"), String.class);
             if (StringUtils.isNotBlank(lockedBy)) {
                 LOG.info("Database locked by: {}", lockedBy);
+                String podNamespace = null;
+                String podName = null;
+
                 StringTokenizer tok = new StringTokenizer(lockedBy, ":");
                 if (tok.countTokens() == 2) {
-                    String podNamespace = tok.nextToken();
-                    String podName = tok.nextToken();
+                    podNamespace = tok.nextToken();
+                    podName = tok.nextToken();
+                } else if (lockedBy.contains(" (") && lockedBy.endsWith(")")) {
+                    podName = lockedBy.substring(0, lockedBy.indexOf(" ("));
+                    podNamespace = KubernetesConnector.getInstance().getPodNamespace();
+                }
+
+                if (podName != null && podNamespace != null) {
                     if (KubernetesConnector.getInstance().isCurrentPod(podNamespace, podName)) {
                         LOG.info("Lock created by the same pod, release lock");
                         releaseLock();
-                    }
-                    boolean lockHolderPodActive = KubernetesConnector.getInstance().isPodActive(podNamespace, podName);
-                    if (!lockHolderPodActive) {
+                    } else if (!KubernetesConnector.getInstance().isPodActive(podNamespace, podName)) {
                         LOG.info("Lock created by an inactive pod, release lock");
                         releaseLock();
                     }
                 } else {
-                    LOG.info("Can't parse LOCKEDBY field: {}", lockedBy);
+                    LOG.warn("Can't parse LOCKEDBY field: {}", lockedBy);
                 }
             } else {
-                LOG.info("Databased is not locked");
+                LOG.info("Database is not locked");
             }
         } catch (DatabaseException e) {
             LOG.error("Can't read the LOCKEDBY field from databasechangeloglock", e);
+        } catch (Exception e) {
+            LOG.error("Error checking lock status", e);
         }
         super.waitForLock();
     }
