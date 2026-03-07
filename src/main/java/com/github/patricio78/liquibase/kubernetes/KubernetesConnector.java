@@ -80,7 +80,7 @@ public class KubernetesConnector {
             LOG.info("Pod phase: {}", podPhase);
             LOG.info("Connected to Kubernetes using fromCluster configuration");
             return true;
-        } catch (IOException | ApiException e) {
+        } catch (Exception e) {
             LOG.error("Connection fail to Kubernetes cluster using fromCluster configuration");
             LOG.error("Pod status read error", e);
             return false;
@@ -130,6 +130,10 @@ public class KubernetesConnector {
                 LOG.error("Can't find pod");
                 return false;
             }
+            LOG.error("Can't read Pod status: {}:{}", podNamespace, podName);
+            LOG.error("Pod status read error", e);
+            return false;
+        } catch (Exception e) {
             LOG.error("Can't read Pod status: {}:{}", podNamespace, podName);
             LOG.error("Pod status read error", e);
             return false;
